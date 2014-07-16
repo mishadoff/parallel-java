@@ -1,23 +1,39 @@
 package org.mishadoff;
 
+import java.util.concurrent.RecursiveAction;
+
+import static org.mishadoff.HackTest.*;
+
 /**
  * @author mishadoff
  */
-public class Hacker {
+public class Hacker implements Runnable {
+    // algorithm
+    private Cypher cypher = new Cypher();
+    // stolen encrypted message
+    private String encryptedMessage;
+    // keyspace
+    private int from;
+    private int to;
 
-    private boolean testCode(String code, String md5) {
-        return md5.equals(Cypher.encode(code));
+    public Hacker(String encryptedMessage, int from, int to) {
+        this.encryptedMessage = encryptedMessage;
+        this.from = from;
+        this.to = to;
     }
 
-    void hack(String cyphered, int from, int to) throws Exception {
+    void hack() {
         for (int code = from; code < to; code++) {
-            if (testCode(String.valueOf(code), cyphered)) {
-                System.out.println("Match: " + code);
-            } else {
-                if (Runner.SLEEP_TIME > 0) {
-                    Thread.sleep(Runner.SLEEP_TIME);
-                }
+            String decryptedMessage =
+                    cypher.decrypt(encryptedMessage, String.valueOf(code));
+            if (test(decryptedMessage)) {
+                System.out.println("Code found: " + code);
             }
         }
+    }
+
+    @Override
+    public void run() {
+        hack();
     }
 }

@@ -9,20 +9,49 @@ import java.security.NoSuchAlgorithmException;
  * @author mishadoff
  */
 public class Cypher {
-    public static String encode(String input) {
-        return MD5(input);
+
+    public String encrypt(String message, String key) {
+        StringBuilder sb = new StringBuilder();
+        int expectedLength = message.length() * 2 - 1;
+        int currentLength = 0;
+        while (currentLength < expectedLength) {
+            if (currentLength % 2 == 0) {
+                sb.append(message.charAt(currentLength / 2));
+            } else {
+                sb.append(key.charAt((currentLength / 2) % key.length()));
+            }
+            currentLength++;
+        }
+        return sb.toString();
     }
 
-    private static String MD5(String original) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] originalBytes = md.digest(original.getBytes());
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < originalBytes.length; ++i) {
-                sb.append(Integer.toHexString((originalBytes[i] & 0xFF) | 0x100).substring(1,3));
+    public String decrypt(String message, String key) {
+        StringBuilder sb = new StringBuilder();
+        int keyIndex = 0;
+        for (int i = 0; i < message.length(); i++) {
+            if (i % 2 == 0) {
+                sb.append(message.charAt(i));
+            } else {
+                int keyDigit = Integer.parseInt("" + key.charAt(keyIndex));
+                int messageDigit = Integer.parseInt("" + message.charAt(i));
+                keyIndex++;
+                if (keyIndex >= key.length()) {
+                    keyIndex = 0;
+                }
+                int delta = Math.abs(keyDigit - messageDigit);
+                if (delta != 0) {
+                    sb.append(String.valueOf(delta).charAt(0));
+                }
             }
-            return sb.toString();
-        } catch (java.security.NoSuchAlgorithmException e) { }
-        return null;
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Cypher c = new Cypher();
+        String key = "123";
+        String enc = c.encrypt("No Woman No Cry!", key);
+        System.out.println(enc);
+        System.out.println(c.decrypt(enc, "133"));
     }
 }
