@@ -23,6 +23,7 @@ public class Runner {
         System.out.printf("Generated KEY: [%s]\n", key);
         System.out.printf("Original Message: [%s]\n", message);
         System.out.printf("Encrypted Message: [%s]\n", cyphered);
+        System.out.printf("Number of processors: [%s]\n", Runtime.getRuntime().availableProcessors());
         System.out.println("========================================");
 
         // single threaded simulation
