@@ -11,7 +11,7 @@ import static org.mishadoff.HackTest.test;
  */
 public class Runner {
 
-    public static final int LIMIT = 10_000_000;
+    public static final int LIMIT = 100_000_000;
 
     public static void main(String[] args) throws Exception {
         String message = "No Woman, No Cry!";
